@@ -29,16 +29,14 @@ const FormInput: React.FC<FormInputProps> = ({
   const { t } = useLanguage();
 
   const baseInputClasses = `w-full px-4 py-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-    error
-      ? 'border-red-300 bg-red-50 focus:ring-red-500'
-      : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+    'border-gray-600 bg-gray-700 text-gray-200 hover:border-gray-500 focus:border-blue-400 placeholder-gray-400'
   }`;
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label className="block text-sm font-semibold text-gray-700">
+      <label className="block text-sm font-semibold text-gray-300">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-red-400 ml-1">*</span>}
       </label>
       
       {type === 'select' && options ? (
@@ -76,7 +74,7 @@ const FormInput: React.FC<FormInputProps> = ({
       )}
       
       {error && (
-        <p className="text-sm text-red-600 font-medium">{error}</p>
+        <p className="text-sm text-red-400 font-medium mt-1">{error}</p>
       )}
     </div>
   );

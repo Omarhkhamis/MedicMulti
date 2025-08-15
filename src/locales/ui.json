@@ -1,0 +1,14 @@
+{
+  "en": {
+    "app_title": "BM Turkey Reports",
+    "footer_text": "Made by Blue Medical Plus Developer Team"
+  },
+  "ru": {
+    "app_title": "BM Turkey Отчеты",
+    "footer_text": "Создано командой разработчиков Blue Medical Plus"
+  },
+  "fr": {
+    "app_title": "BM Turkey Rapports",
+    "footer_text": "Créé par l'équipe de développement Blue Medical Plus"
+  }
+}

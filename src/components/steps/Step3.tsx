@@ -116,10 +116,10 @@ const Step3: React.FC<Step3Props> = ({
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold text-gray-200 mb-2">
           {t('additional_information')}
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-400">
           {t('additional_info_desc')}
         </p>
       </div>
@@ -127,10 +127,10 @@ const Step3: React.FC<Step3Props> = ({
       {/* Multiple Images Upload Section */}
       <div className="space-y-4">
         <div className="flex items-baseline justify-between gap-4">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label className="block text-sm font-semibold text-gray-300">
             {t('upload_images')}
           </label>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-400">
             {uploadedCount}/{MAX_IMAGES} {t('uploaded')}
             {remaining > 0 ? ` · ${remaining} ${t('remaining')}` : ` · ${t('limit_reached')}`}
           </span>
@@ -139,8 +139,8 @@ const Step3: React.FC<Step3Props> = ({
         <div
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
             uploadDisabled
-              ? "border-gray-200 bg-gray-50 cursor-not-allowed opacity-75"
-              : "border-gray-300 hover:border-gray-400"
+              ? "border-gray-600 bg-gray-700 cursor-not-allowed opacity-75"
+              : "border-gray-500 hover:border-gray-400 bg-gray-700"
           }`}
         >
           <input
@@ -158,14 +158,14 @@ const Step3: React.FC<Step3Props> = ({
               uploadDisabled ? "pointer-events-none" : "cursor-pointer"
             }`}
           >
-            <Upload className="w-12 h-12 text-gray-400" />
+            <Upload className="w-12 h-12 text-gray-500" />
             <div>
-              <p className="text-lg font-medium text-gray-700">
+              <p className="text-lg font-medium text-gray-300">
                 {uploadDisabled
                   ? t('upload_limit_reached')
                   : t('click_to_upload')}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 {t('jpg_png_only').replace('{{max}}', MAX_IMAGES.toString())}
               </p>
             </div>
@@ -175,7 +175,7 @@ const Step3: React.FC<Step3Props> = ({
         {/* Images Preview */}
         {uploadedCount > 0 && (
           <div className="space-y-4">
-            <h4 className="text-lg font-medium text-gray-800">
+            <h4 className="text-lg font-medium text-gray-200">
               {t('uploaded_images')} ({uploadedCount}/{MAX_IMAGES})
             </h4>
 
@@ -183,12 +183,12 @@ const Step3: React.FC<Step3Props> = ({
               {(formData.uploadedImages ?? []).map((image, index) => (
                 <div
                   key={index}
-                  className="relative bg-gray-50 rounded-lg p-4 space-y-3 border border-gray-200"
+                  className="relative bg-gray-700 rounded-lg p-4 space-y-3 border border-gray-600"
                 >
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
-                    className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-all duration-200"
+                    className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-full transition-all duration-200"
                     title="Remove image"
                     aria-label={`Remove image ${index + 1}`}
                   >
@@ -196,12 +196,12 @@ const Step3: React.FC<Step3Props> = ({
                   </button>
 
                   <div className="flex items-center gap-2 pr-10">
-                    <Image className="w-5 h-5 text-blue-500 shrink-0" />
+                    <Image className="w-5 h-5 text-blue-400 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-800 truncate">
+                      <p className="font-medium text-gray-200 truncate">
                         {image.name}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-400">
                         {(image.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
@@ -211,7 +211,7 @@ const Step3: React.FC<Step3Props> = ({
                     <img
                       src={URL.createObjectURL(image)}
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      className="w-full h-32 object-cover rounded-lg border border-gray-600"
                     />
                   </div>
                 </div>
@@ -222,11 +222,11 @@ const Step3: React.FC<Step3Props> = ({
       </div>
 
       {/* PDF Language Selection */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
-        <h4 className="text-lg font-semibold text-blue-800 flex items-center gap-2">
+      <div className="bg-slate-700 border border-slate-600 rounded-lg p-6 space-y-4">
+        <h4 className="text-lg font-semibold text-blue-300 flex items-center gap-2">
           📄 {t('pdf_export_language')}
         </h4>
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-gray-300">
           {t('pdf_language_description')}
         </p>
         <FormInput

@@ -37,10 +37,10 @@ const Step1: React.FC<StepProps> = ({ formData, errors, onChange, onBlur }) => {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold text-gray-200 mb-2">
           {t('personal_information')}
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-400">
           {t('personal_info_desc')}
         </p>
       </div>

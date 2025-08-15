@@ -10,7 +10,7 @@ import { generatePDF } from "../utils/pdfGenerator";
 import { FileText, CheckCircle } from "lucide-react";
 
 const MultiStepForm: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, ui } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -202,23 +202,23 @@ const MultiStepForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8">
+        <div className="bg-gray-800 shadow-2xl border border-gray-700 overflow-hidden rounded-2xl">
+          <div className="bg-gradient-to-r from-slate-800 to-gray-900 text-white p-8 border-b border-gray-700 rounded-t-2xl">
             <div className="absolute top-4 right-4">
               <LanguageSelector />
             </div>
             <div className="flex items-center gap-3 mb-4">
               <FileText className="w-8 h-8" />
-              <h1 className="text-3xl font-bold">{t('medical_form')}</h1>
+              <h1 className="text-3xl font-bold">{ui('app_title')}</h1>
             </div>
-            <p className="text-blue-100">
+            <p className="text-gray-300">
               {t('step_complete').replace('{{step}}', currentStep.toString())}
             </p>
           </div>
 
-          <div className="p-8">
+          <div className="p-8 bg-gray-800">
             {renderStep()}
             <StepNavigation
               currentStep={currentStep}
@@ -227,15 +227,23 @@ const MultiStepForm: React.FC = () => {
               onPrevious={handlePrevious}
               onSubmit={handleSubmit}
               isValid={Object.keys(errors).length === 0}
+              isSubmitting={isSubmitting}
             />
           </div>
         </div>
 
+        {/* Footer */}
+        <div className="bg-gradient-to-r from-slate-700 to-gray-800 text-white p-4 shadow-lg border-t border-slate-600 mt-0 rounded-b-2xl">
+          <div className="text-center">
+            <p className="text-sm text-gray-300">{ui('footer_text')}</p>
+          </div>
+        </div>
+
         {isSubmitting && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 flex items-center gap-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <p className="text-gray-700 font-medium">{t('generating_pdf')}</p>
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-gray-800 border border-gray-600 rounded-lg p-6 flex items-center gap-4 shadow-2xl">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+              <p className="text-gray-200 font-medium">{t('generating_pdf')}</p>
             </div>
           </div>
         )}

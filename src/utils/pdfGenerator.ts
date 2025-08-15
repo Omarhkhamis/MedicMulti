@@ -332,15 +332,15 @@ function money(v: number | "" | undefined, currency: string) {
 /* ========= table layout ========= */
 function softBoxLayout(): TableLayout {
   return {
-    hLineColor: () => "#cfd8dc",
-    vLineColor: () => "#cfd8dc",
+    hLineColor: () => "#475569",
+    vLineColor: () => "#475569",
     hLineWidth: (i: number) => (i === 1 ? 1.2 : 0.6),
     vLineWidth: () => 0.6,
     paddingLeft: () => 6,
     paddingRight: () => 6,
     paddingTop: () => 6,
     paddingBottom: () => 6,
-    fillColor: (rowIndex: number) => (rowIndex === 0 ? "#eef6ff" : "#fafafa"),
+    fillColor: (rowIndex: number) => (rowIndex === 0 ? "#1e293b" : "#f8fafc"),
   };
 }
 
@@ -489,17 +489,15 @@ function ServicesBox(
   const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
   
   const header: TableCell[] = [
-    { text: t.serviceName, style: "tableHeader", alignment: "center" },
-    { text: t.serviceType, style: "tableHeader", alignment: "center" },
-    { text: t.price, style: "tableHeader", alignment: "center" },
-    { text: t.quantity, style: "tableHeader", alignment: "center" },
-    { text: t.total, style: "tableHeader", alignment: "center" },
+    { text: t.serviceName, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
+    { text: t.serviceType, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
+    { text: t.price, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
+    { text: t.quantity, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
+    { text: t.total, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
   ];
   const rows: TableCell[][] = entries.map((s) => [
     {
-      text: asText(
-        mapLabel(servicesOptionsAll, s.serviceName as string | number | "")
-      ),
+      text: mapLabel(servicesOptionsAll, s.serviceName) || asText(s.serviceName),
       alignment: "center",
     },
     { text: asText(s.serviceType), alignment: "center" },
@@ -567,15 +565,14 @@ function AboutClinicBox(lang: string = 'en'): Content {
 }
 
 /** يجعل العنوان + كل الصور (حتى 4 صور) + البانر السفلي في نفس الصفحة وداخل بلوك واحد */
-function GalleryWithBottomBanner(
+function GalleryOnly(
   squareDataUrls: string[],
-  bannerDataUrl?: string | null,
   lang: string = 'en'
 ): Content {
   const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
   
   const imgs = (squareDataUrls || []).slice(0, GALLERY_MAX);
-  if (!imgs.length) return { text: "" };
+  if (!imgs.length) return { text: "" }; // لا تظهر شيء إذا لم تكن هناك صور
 
   const rows: string[][] = [];
   for (let i = 0; i < imgs.length; i += 2) {
@@ -604,23 +601,25 @@ function GalleryWithBottomBanner(
   };
 
   const stack: Content[] = [
-    { text: t.uploadedImages, style: "boxTitle", margin: [0, 6, 0, 6] },
     ...rows.map(rowTable),
   ];
-
-  if (bannerDataUrl) {
-    stack.push({
-      image: bannerDataUrl,
-      width: CONTENT_WIDTH,
-      alignment: "center",
-      margin: [0, 10, 0, 0],
-    });
-  }
 
   return {
     margin: [0, 8, 0, 0],
     unbreakable: true,
     stack,
+  };
+}
+
+/** البانر السفلي كعنصر منفصل */
+function BottomBanner(bannerDataUrl?: string | null): Content {
+  if (!bannerDataUrl) return { text: "" };
+  
+  return {
+    image: bannerDataUrl,
+    width: CONTENT_WIDTH,
+    alignment: "center",
+    margin: [0, 10, 0, 0],
   };
 }
 
@@ -776,13 +775,19 @@ export async function generatePDF(formData: FormData): Promise<void> {
             ]
           : []),
 
+        // Grand Total Table
         {
-          columns: [
-            { text: t.grandTotal, style: "label", alignment: "right" },
-            { text: `${all} ${currency}`, style: "value", alignment: "right" },
-          ],
-          columnGap: 8,
           margin: [0, 6, 0, 6],
+          table: {
+            widths: ["*", "auto"],
+            body: [
+              [
+                { text: t.grandTotal, bold: true, fontSize: 11, color: "#ffffff", alignment: "left" },
+                { text: `${all} ${currency}`, bold: true, fontSize: 11, color: "#ffffff", alignment: "right" },
+              ],
+            ],
+          },
+          layout: softBoxLayout(),
         },
 
         // صناديق ملاحظات/خطة العلاج
@@ -805,18 +810,23 @@ export async function generatePDF(formData: FormData): Promise<void> {
 
         AboutClinicBox(pdfLang),
 
-        // المعرض + العنوان + البانر السفلي كبلوك واحد
-        GalleryWithBottomBanner(squareUrls, bannerBottomDataUrl, pdfLang),
+        // المعرض (الصور فقط إذا وجدت)
+        GalleryOnly(squareUrls, pdfLang),
+        
+        // البانر السفلي (يظهر دائماً إذا كان متوفراً)
+        BottomBanner(bannerBottomDataUrl),
       ],
 
       defaultStyle: { font: "Roboto", fontSize: 9, alignment: "left" },
       styles: {
         headerEN: { fontSize: 16, bold: true },
-        boxTitle: { fontSize: 11, bold: true },
-        tableHeader: { bold: true, fillColor: "#e3f2fd" },
+        boxTitle: { fontSize: 11, bold: true, color: "#ffffff" },
+        tableHeader: { bold: true, fillColor: "#334155", color: "#ffffff", fontSize: 10 },
         label: { bold: true, fontSize: 9 },
         value: { fontSize: 9 },
         placeholder: { bold: true, color: "#999", fontSize: 9 },
+        grandTotalLabel: { bold: true, fontSize: 11, color: "#000000" },
+        grandTotalValue: { bold: true, fontSize: 11, color: "#000000" },
       } as StyleDictionary,
     };
 

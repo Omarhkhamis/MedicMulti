@@ -20,8 +20,8 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-gray-700">
-        {t('phone_number')} <span className="text-red-500 ml-1">*</span>
+      <label className="block text-sm font-semibold text-gray-300">
+        {t('phone_number')} <span className="text-red-400 ml-1">*</span>
       </label>
       
       <div className="phone-input-wrapper">
@@ -37,28 +37,28 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       </div>
       
       {error && (
-        <p className="text-sm text-red-600 font-medium">{error}</p>
+        <p className="text-sm text-red-400 font-medium">{error}</p>
       )}
       
       <style jsx global>{`
         .phone-input-wrapper .PhoneInput {
           display: flex;
           align-items: stretch;
-          border: 1px solid ${error ? '#fca5a5' : '#d1d5db'};
+          border: 1px solid #4b5563;
           border-radius: 8px;
-          background: ${error ? '#fef2f2' : 'white'};
+          background: #374151;
           transition: all 0.2s;
           height: 48px;
         }
         
         .phone-input-wrapper .PhoneInput:hover {
-          border-color: ${error ? '#fca5a5' : '#9ca3af'};
+          border-color: #6b7280;
         }
         
         .phone-input-wrapper .PhoneInput:focus-within {
           outline: none;
-          box-shadow: 0 0 0 2px ${error ? '#ef4444' : '#3b82f6'}40;
-          border-color: ${error ? '#ef4444' : '#3b82f6'};
+          box-shadow: 0 0 0 2px #60a5fa40;
+          border-color: #60a5fa;
         }
         
         .phone-input-wrapper .PhoneInputCountry {
@@ -67,7 +67,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           padding: 0 12px;
           border: none;
           background: transparent;
-          border-right: 1px solid #e5e7eb;
+          border-right: 1px solid #6b7280;
           border-radius: 0;
           min-width: 80px;
         }
@@ -80,11 +80,11 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         }
         
         .phone-input-wrapper .PhoneInputCountrySelect {
-          background: transparent;
+          background: #374151;
           border: none;
           outline: none;
           font-size: 14px;
-          color: #374151;
+          color: #e5e7eb;
           cursor: pointer;
           padding: 0;
           margin: 0;
@@ -97,7 +97,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           padding: 12px 16px;
           font-size: 16px;
           background: transparent;
-          color: #374151;
+          color: #e5e7eb;
           border-radius: 0;
           height: 100%;
         }

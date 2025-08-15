@@ -305,7 +305,7 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
     isRequired: boolean = true
   ) => (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">{title}</h3>
+      <h3 className="text-xl font-semibold text-gray-200 border-b border-gray-600 pb-2">{title}</h3>
 
       {/* Visit Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -330,8 +330,8 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
       </div>
 
       {/* Service Entry Form */}
-      <div className="bg-gray-50 rounded-lg p-6 space-y-6">
-        <h4 className="text-lg font-medium text-gray-800">{t('add_service_entry')}</h4>
+      <div className="bg-gray-700 border border-gray-600 rounded-lg p-6 space-y-6">
+        <h4 className="text-lg font-medium text-gray-200">{t('add_service_entry')}</h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormInput
@@ -373,7 +373,7 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
           <button
             type="button"
             onClick={onAddEntry}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-all duration-200 hover:shadow-lg hover:shadow-blue-200"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20"
           >
             <Plus size={20} />
             {t('add_entry')}
@@ -384,11 +384,11 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
       {/* Service Entries List */}
       {(visitData.serviceEntries ?? []).length > 0 && (
         <div className="space-y-4">
-          <h4 className="text-lg font-medium text-gray-800">{t('service_entries')}</h4>
+          <h4 className="text-lg font-medium text-gray-200">{t('service_entries')}</h4>
 
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
-              <div className="grid grid-cols-12 gap-4 text-sm font-semibold text-gray-700">
+          <div className="bg-gray-700 border border-gray-600 rounded-lg overflow-hidden">
+            <div className="bg-gray-600 px-6 py-3 border-b border-gray-500">
+              <div className="grid grid-cols-12 gap-4 text-sm font-semibold text-gray-200">
                 <div className="col-span-3">{t('service_name')}</div>
                 <div className="col-span-3">{t('service_type')}</div>
                 <div className="col-span-2">{t('price')}</div>
@@ -397,30 +397,30 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
               </div>
             </div>
 
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-600">
               {(visitData.serviceEntries ?? []).map((entry) => (
                 <div
                   key={entry.id}
-                  className="px-6 py-4 hover:bg-gray-50 transition-colors"
+                  className="px-6 py-4 hover:bg-gray-600 transition-colors"
                 >
                   <div className="grid grid-cols-12 gap-4 items-center text-sm">
-                    <div className="col-span-3 text-gray-900">
+                    <div className="col-span-3 text-gray-200">
                       {entry.serviceName || "-"}
                     </div>
-                    <div className="col-span-3 text-gray-900">
+                    <div className="col-span-3 text-gray-200">
                       {entry.serviceType || "-"}
                     </div>
-                    <div className="col-span-2 text-gray-900">
+                    <div className="col-span-2 text-gray-200">
                       {formatPrice(entry.price, formData.currency)}
                     </div>
-                    <div className="col-span-2 text-gray-900">
+                    <div className="col-span-2 text-gray-200">
                       {entry.quantity || "-"}
                     </div>
                     <div className="col-span-2 text-center">
                       <button
                         type="button"
                         onClick={() => onRemoveEntry(entry.id)}
-                        className="inline-flex items-center justify-center w-8 h-8 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-all duration-200"
+                        className="inline-flex items-center justify-center w-8 h-8 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-full transition-all duration-200"
                         title="Remove entry"
                       >
                         <X size={16} />
@@ -432,7 +432,7 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
             </div>
           </div>
 
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-400">
             {t('total_entries')}: {(visitData.serviceEntries ?? []).length}
           </div>
         </div>
@@ -469,10 +469,10 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
   return (
     <div className="space-y-12">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold text-gray-200 mb-2">
           {t('medical_visits')}
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-400">
           {t('medical_visits_desc')}
         </p>
       </div>
@@ -501,11 +501,11 @@ const Step2: React.FC<Step2Props> = ({ formData, errors, onChange }) => {
           type="checkbox"
           checked={secondVisitEnabled}
           onChange={(e) => toggleSecondVisit(e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-400 focus:ring-offset-gray-800"
         />
         <label
           htmlFor="enable-second-visit"
-          className="text-sm font-medium text-gray-700 select-none"
+          className="text-sm font-medium text-gray-300 select-none"
         >
           {t('enable_second_visit')}
         </label>
