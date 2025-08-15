@@ -238,16 +238,15 @@ const MultiStepForm: React.FC = () => {
         <div className="bg-gradient-to-r from-slate-700 to-gray-800 text-white p-4 shadow-lg border-t border-slate-600 mt-0 rounded-b-2xl">
           <div className="text-center">
             <p className="text-sm text-gray-300">
-              Made by{" "}
+              {ui("footer_text")}
               <a
                 href="https://mo7amadalmousa.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200"
               >
-                Blue Medical Plus
+                Omar Haj Khamis & Mohamad Almousa
               </a>{" "}
-              Developer Team
             </p>
           </div>
         </div>
