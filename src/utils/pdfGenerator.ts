@@ -61,7 +61,8 @@ const pdfTranslations = {
     medicalNotes: "Medical Notes",
     aboutTheClinic: "About the Clinic",
     uploadedImages: "Uploaded Images",
-    aboutClinicText: "At DENTAL CLINIC, we are committed to providing the highest standards of quality, expertise, and healthcare, delivered by the most experienced medical and administrative staff. We offer cosmetic medical services by a team of the best doctors in the field of aesthetic medicine in Turkey."
+    aboutClinicText:
+      "At DENTAL CLINIC, we are committed to providing the highest standards of quality, expertise, and healthcare, delivered by the most experienced medical and administrative staff. We offer cosmetic medical services by a team of the best doctors in the field of aesthetic medicine in Turkey.",
   },
   ru: {
     medicalFormReport: "Отчет медицинской формы",
@@ -92,7 +93,8 @@ const pdfTranslations = {
     medicalNotes: "Медицинские заметки",
     aboutTheClinic: "О клинике",
     uploadedImages: "Загруженные изображения",
-    aboutClinicText: "В СТОМАТОЛОГИЧЕСКОЙ КЛИНИКЕ мы стремимся предоставить высочайшие стандарты качества, экспертизы и здравоохранения, предоставляемые самым опытным медицинским и административным персоналом. Мы предлагаем косметические медицинские услуги командой лучших врачей в области эстетической медицины в Турции."
+    aboutClinicText:
+      "В СТОМАТОЛОГИЧЕСКОЙ КЛИНИКЕ мы стремимся предоставить высочайшие стандарты качества, экспертизы и здравоохранения, предоставляемые самым опытным медицинским и административным персоналом. Мы предлагаем косметические медицинские услуги командой лучших врачей в области эстетической медицины в Турции.",
   },
   fr: {
     medicalFormReport: "Rapport de formulaire médical",
@@ -123,8 +125,9 @@ const pdfTranslations = {
     medicalNotes: "Notes médicales",
     aboutTheClinic: "À propos de la clinique",
     uploadedImages: "Images téléchargées",
-    aboutClinicText: "À la CLINIQUE DENTAIRE, nous nous engageons à fournir les plus hauts standards de qualité, d'expertise et de soins de santé, dispensés par le personnel médical et administratif le plus expérimenté. Nous offrons des services médicaux cosmétiques par une équipe des meilleurs médecins dans le domaine de la médecine esthétique en Turquie."
-  }
+    aboutClinicText:
+      "À la CLINIQUE DENTAIRE, nous nous engageons à fournir les plus hauts standards de qualité, d'expertise et de soins de santé, dispensés par le personnel médical et administratif le plus expérimenté. Nous offrons des services médicaux cosmétiques par une équipe des meilleurs médecins dans le domaine de la médecine esthétique en Turquie.",
+  },
 };
 
 /* ========= config ========= */
@@ -340,7 +343,7 @@ function softBoxLayout(): TableLayout {
     paddingRight: () => 6,
     paddingTop: () => 6,
     paddingBottom: () => 6,
-    fillColor: (rowIndex: number) => (rowIndex === 0 ? "#1e293b" : "#f8fafc"),
+    fillColor: (rowIndex: number) => (rowIndex === 0 ? "#2f2c27" : "#f8fafc"),
   };
 }
 
@@ -351,9 +354,10 @@ const Val = (v: string | number | ""): Content =>
     : { text: String(v), style: "value" };
 
 /* ========= sections ========= */
-function PersonalInfoBox(data: FormData, lang: string = 'en'): Content {
-  const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-  
+function PersonalInfoBox(data: FormData, lang: string = "en"): Content {
+  const t =
+    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
+
   return {
     margin: [0, 6, 0, 10],
     table: {
@@ -455,9 +459,15 @@ function PersonalInfoBox(data: FormData, lang: string = 'en'): Content {
   };
 }
 
-function VisitInfoBox(title: string, date: string, days: number | "", lang: string = 'en'): Content {
-  const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-  
+function VisitInfoBox(
+  title: string,
+  date: string,
+  days: number | "",
+  lang: string = "en"
+): Content {
+  const t =
+    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
+
   return {
     margin: [0, 6, 0, 8],
     table: {
@@ -484,20 +494,52 @@ function ServicesBox(
   title: string,
   entries: ServiceEntry[],
   currency: string,
-  lang: string = 'en'
+  lang: string = "en"
 ): Content {
-  const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-  
+  const t =
+    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
+
   const header: TableCell[] = [
-    { text: t.serviceName, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
-    { text: t.serviceType, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
-    { text: t.price, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
-    { text: t.quantity, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
-    { text: t.total, alignment: "center", bold: true, color: "#ffffff", fontSize: 10 },
+    {
+      text: t.serviceName,
+      alignment: "center",
+      bold: true,
+      color: "#ffffff",
+      fontSize: 10,
+    },
+    {
+      text: t.serviceType,
+      alignment: "center",
+      bold: true,
+      color: "#ffffff",
+      fontSize: 10,
+    },
+    {
+      text: t.price,
+      alignment: "center",
+      bold: true,
+      color: "#ffffff",
+      fontSize: 10,
+    },
+    {
+      text: t.quantity,
+      alignment: "center",
+      bold: true,
+      color: "#ffffff",
+      fontSize: 10,
+    },
+    {
+      text: t.total,
+      alignment: "center",
+      bold: true,
+      color: "#ffffff",
+      fontSize: 10,
+    },
   ];
   const rows: TableCell[][] = entries.map((s) => [
     {
-      text: mapLabel(servicesOptionsAll, s.serviceName) || asText(s.serviceName),
+      text:
+        mapLabel(servicesOptionsAll, s.serviceName) || asText(s.serviceName),
       alignment: "center",
     },
     { text: asText(s.serviceType), alignment: "center" },
@@ -548,9 +590,10 @@ function DocNoteBox(title: string, text?: string): Content {
   };
 }
 
-function AboutClinicBox(lang: string = 'en'): Content {
-  const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-  
+function AboutClinicBox(lang: string = "en"): Content {
+  const t =
+    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
+
   return {
     margin: [0, 6, 0, 0],
     table: {
@@ -565,12 +608,10 @@ function AboutClinicBox(lang: string = 'en'): Content {
 }
 
 /** يجعل العنوان + كل الصور (حتى 4 صور) + البانر السفلي في نفس الصفحة وداخل بلوك واحد */
-function GalleryOnly(
-  squareDataUrls: string[],
-  lang: string = 'en'
-): Content {
-  const t = pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-  
+function GalleryOnly(squareDataUrls: string[], lang: string = "en"): Content {
+  const t =
+    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
+
   const imgs = (squareDataUrls || []).slice(0, GALLERY_MAX);
   if (!imgs.length) return { text: "" }; // لا تظهر شيء إذا لم تكن هناك صور
 
@@ -600,9 +641,7 @@ function GalleryOnly(
     };
   };
 
-  const stack: Content[] = [
-    ...rows.map(rowTable),
-  ];
+  const stack: Content[] = [...rows.map(rowTable)];
 
   return {
     margin: [0, 8, 0, 0],
@@ -614,7 +653,7 @@ function GalleryOnly(
 /** البانر السفلي كعنصر منفصل */
 function BottomBanner(bannerDataUrl?: string | null): Content {
   if (!bannerDataUrl) return { text: "" };
-  
+
   return {
     image: bannerDataUrl,
     width: CONTENT_WIDTH,
@@ -676,8 +715,10 @@ export async function generatePDF(formData: FormData): Promise<void> {
     await ensureAssets();
 
     // Get PDF language from form data, default to English
-    const pdfLang = formData.pdfLanguage || 'en';
-    const t = pdfTranslations[pdfLang as keyof typeof pdfTranslations] || pdfTranslations.en;
+    const pdfLang = formData.pdfLanguage || "en";
+    const t =
+      pdfTranslations[pdfLang as keyof typeof pdfTranslations] ||
+      pdfTranslations.en;
 
     // جهّز صور Step3 كمربعات 220×220 (حسب SQUARE_SIDE)
     const f = formData as FormData & ExtraFields;
@@ -782,8 +823,20 @@ export async function generatePDF(formData: FormData): Promise<void> {
             widths: ["*", "auto"],
             body: [
               [
-                { text: t.grandTotal, bold: true, fontSize: 11, color: "#ffffff", alignment: "left" },
-                { text: `${all} ${currency}`, bold: true, fontSize: 11, color: "#ffffff", alignment: "right" },
+                {
+                  text: t.grandTotal,
+                  bold: true,
+                  fontSize: 11,
+                  color: "#ffffff",
+                  alignment: "left",
+                },
+                {
+                  text: `${all} ${currency}`,
+                  bold: true,
+                  fontSize: 11,
+                  color: "#ffffff",
+                  alignment: "right",
+                },
               ],
             ],
           },
@@ -812,7 +865,7 @@ export async function generatePDF(formData: FormData): Promise<void> {
 
         // المعرض (الصور فقط إذا وجدت)
         GalleryOnly(squareUrls, pdfLang),
-        
+
         // البانر السفلي (يظهر دائماً إذا كان متوفراً)
         BottomBanner(bannerBottomDataUrl),
       ],
@@ -821,7 +874,12 @@ export async function generatePDF(formData: FormData): Promise<void> {
       styles: {
         headerEN: { fontSize: 16, bold: true },
         boxTitle: { fontSize: 11, bold: true, color: "#ffffff" },
-        tableHeader: { bold: true, fillColor: "#334155", color: "#ffffff", fontSize: 10 },
+        tableHeader: {
+          bold: true,
+          fillColor: "#334155",
+          color: "#ffffff",
+          fontSize: 10,
+        },
         label: { bold: true, fontSize: 9 },
         value: { fontSize: 9 },
         placeholder: { bold: true, color: "#999", fontSize: 9 },

@@ -70,28 +70,28 @@ const MultiStepForm: React.FC = () => {
 
     if (step === 1) {
       if (!formData.consultantName.trim())
-        newErrors.consultantName = t('consultant_name_required');
+        newErrors.consultantName = t("consultant_name_required");
       if (!formData.patientName.trim())
-        newErrors.patientName = t('patient_name_required');
+        newErrors.patientName = t("patient_name_required");
       if (!formData.phoneNumber.trim())
-        newErrors.phoneNumber = t('phone_number_required');
+        newErrors.phoneNumber = t("phone_number_required");
       if (!formData.patientId.trim())
-        newErrors.patientId = t('patient_id_required');
-      if (!formData.entryDate) newErrors.entryDate = t('entry_date_required');
-      if (!formData.age) newErrors.age = t('age_required');
-      if (!formData.currency) newErrors.currency = t('currency_required');
-      if (!formData.language) newErrors.language = t('language_required');
+        newErrors.patientId = t("patient_id_required");
+      if (!formData.entryDate) newErrors.entryDate = t("entry_date_required");
+      if (!formData.age) newErrors.age = t("age_required");
+      if (!formData.currency) newErrors.currency = t("currency_required");
+      if (!formData.language) newErrors.language = t("language_required");
       if (!formData.healthCondition)
-        newErrors.healthCondition = t('health_condition_required');
-      if (!formData.services) newErrors.services = t('services_required');
+        newErrors.healthCondition = t("health_condition_required");
+      if (!formData.services) newErrors.services = t("services_required");
     }
 
     if (step === 2) {
       // First visit is always required
       if (!formData.firstVisit.visitDate)
-        newErrors.firstVisitDate = t('first_visit_date_required');
+        newErrors.firstVisitDate = t("first_visit_date_required");
       if (!formData.firstVisit.visitDays)
-        newErrors.firstVisitDays = t('first_visit_days_required');
+        newErrors.firstVisitDays = t("first_visit_days_required");
 
       // Second visit is optional — validate only if it has data
       const hasSecondVisitData =
@@ -101,9 +101,9 @@ const MultiStepForm: React.FC = () => {
 
       if (hasSecondVisitData) {
         if (!formData.secondVisit.visitDate)
-          newErrors.secondVisitDate = t('second_visit_date_required');
+          newErrors.secondVisitDate = t("second_visit_date_required");
         if (!formData.secondVisit.visitDays)
-          newErrors.secondVisitDays = t('second_visit_days_required');
+          newErrors.secondVisitDays = t("second_visit_days_required");
       }
     }
 
@@ -191,11 +191,9 @@ const MultiStepForm: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8 text-center max-w-md">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            {t('pdf_generated_success')}
+            {t("pdf_generated_success")}
           </h2>
-          <p className="text-gray-600">
-            {t('pdf_generated_desc')}
-          </p>
+          <p className="text-gray-600">{t("pdf_generated_desc")}</p>
         </div>
       </div>
     );
@@ -204,17 +202,17 @@ const MultiStepForm: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gray-800 shadow-2xl border border-gray-700 overflow-hidden rounded-2xl">
+        <div className="bg-gray-800 shadow-2xl border border-gray-700 overflow-hidden rounded-t-2xl">
           <div className="bg-gradient-to-r from-slate-800 to-gray-900 text-white p-8 border-b border-gray-700 rounded-t-2xl">
             <div className="absolute top-4 right-4">
               <LanguageSelector />
             </div>
             <div className="flex items-center gap-3 mb-4">
               <FileText className="w-8 h-8" />
-              <h1 className="text-3xl font-bold">{ui('app_title')}</h1>
+              <h1 className="text-3xl font-bold">{ui("app_title")}</h1>
             </div>
             <p className="text-gray-300">
-              {t('step_complete').replace('{{step}}', currentStep.toString())}
+              {t("step_complete").replace("{{step}}", currentStep.toString())}
             </p>
           </div>
 
@@ -235,7 +233,7 @@ const MultiStepForm: React.FC = () => {
         {/* Footer */}
         <div className="bg-gradient-to-r from-slate-700 to-gray-800 text-white p-4 shadow-lg border-t border-slate-600 mt-0 rounded-b-2xl">
           <div className="text-center">
-            <p className="text-sm text-gray-300">{ui('footer_text')}</p>
+            <p className="text-sm text-gray-300">{ui("footer_text")}</p>
           </div>
         </div>
 
@@ -243,7 +241,7 @@ const MultiStepForm: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
             <div className="bg-gray-800 border border-gray-600 rounded-lg p-6 flex items-center gap-4 shadow-2xl">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-              <p className="text-gray-200 font-medium">{t('generating_pdf')}</p>
+              <p className="text-gray-200 font-medium">{t("generating_pdf")}</p>
             </div>
           </div>
         )}
