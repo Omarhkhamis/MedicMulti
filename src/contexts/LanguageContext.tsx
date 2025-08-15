@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import enTranslations from '../locales/en.json';
 import ruTranslations from '../locales/ru.json';
 import frTranslations from '../locales/fr.json';
+import arTranslations from '../locales/ar.json';
 import uiTranslations from '../locales/ui.json';
 
-export type Language = 'en' | 'ru' | 'fr';
+export type Language = 'en' | 'ru' | 'fr' | 'ar';
 
 interface LanguageContextType {
   language: Language;
@@ -18,7 +19,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations = {
   en: enTranslations,
   ru: ruTranslations,
-  fr: frTranslations
+  fr: frTranslations,
+  ar: arTranslations
 };
 
 interface LanguageProviderProps {

@@ -49,6 +49,7 @@ const Step3: React.FC<Step3Props> = ({
     { value: "en", label: "🇺🇸 English" },
     { value: "ru", label: "🇷🇺 Русский" },
     { value: "fr", label: "🇫🇷 Français" },
+    { value: "ar", label: "🇸🇦 العربية" },
   ];
 
   const handleImagesUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

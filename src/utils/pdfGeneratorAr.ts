@@ -1,6 +1,6 @@
 // src/utils/pdfGenerator.ts
 import pdfMake from "pdfmake/build/pdfmake";
-import type {
+import {
   TDocumentDefinitions,
   Content,
   TableCell,
@@ -16,9 +16,13 @@ interface BrowserPdfMake {
   };
 }
 type PdfMakeStatic = typeof pdfMake;
-// Fonts (Roboto only)
+
+// Fonts - Arabic support with Amiri
 import robotoRegularUrl from "../fonts/Roboto-Regular.ttf?url";
 import robotoBoldUrl from "../fonts/Roboto-Bold.ttf?url";
+// Add Arial font URLs
+import arialRegularUrl from "../fonts/Arial-Regular.ttf?url";
+import arialBoldUrl from "../fonts/Arial-Bold.ttf?url";
 
 // Top/Bottom banners — SVG only (background)
 import headerSvgUrl from "../fonts/header.svg?url";
@@ -29,107 +33,9 @@ import bannerTopUrl from "../fonts/banner.png?url";
 import bannerBottomUrl from "../fonts/banner1.png?url";
 
 import { FormData, ServiceEntry } from "../types/form";
-import { generatePDF as generatePDFArabic } from "./pdfGeneratorAr";
 
-/* ========= PDF Language Translations ========= */
-const pdfTranslations = {
-  en: {
-    medicalFormReport: "Medical Form Report",
-    personalInformation: "Personal Information",
-    consultantName: "Consultant Name",
-    patientName: "Patient Name",
-    phoneNumber: "Phone Number",
-    patientId: "Patient ID",
-    entryDate: "Entry Date",
-    age: "Age",
-    currency: "Currency",
-    language: "Language",
-    healthCondition: "Health Condition",
-    services: "Services",
-    firstVisitInformation: "First Visit Information",
-    secondVisitInformation: "Second Visit Information",
-    visitDate: "Visit Date",
-    visitDays: "Visit Days",
-    firstVisitServiceEntries: "First Visit Service Entries",
-    secondVisitServiceEntries: "Second Visit Service Entries",
-    serviceName: "Service Name",
-    serviceType: "Service Type",
-    price: "Price",
-    quantity: "Quantity",
-    total: "Total",
-    grandTotal: "Grand Total",
-    medicalTreatmentPlan: "Medical Treatment Plan",
-    medicalNotes: "Medical Notes",
-    aboutTheClinic: "About the Clinic",
-    uploadedImages: "Uploaded Images",
-    aboutClinicText:
-      "At DENTAL CLINIC, we are committed to providing the highest standards of quality, expertise, and healthcare, delivered by the most experienced medical and administrative staff. We offer cosmetic medical services by a team of the best doctors in the field of aesthetic medicine in Turkey.",
-  },
-  ru: {
-    medicalFormReport: "Отчет медицинской формы",
-    personalInformation: "Личная информация",
-    consultantName: "Имя консультанта",
-    patientName: "Имя пациента",
-    phoneNumber: "Номер телефона",
-    patientId: "ID пациента",
-    entryDate: "Дата поступления",
-    age: "Возраст",
-    currency: "Валюта",
-    language: "Язык",
-    healthCondition: "Состояние здоровья",
-    services: "Услуги",
-    firstVisitInformation: "Информация о первом визите",
-    secondVisitInformation: "Информация о втором визите",
-    visitDate: "Дата визита",
-    visitDays: "Дни визита",
-    firstVisitServiceEntries: "Записи услуг первого визита",
-    secondVisitServiceEntries: "Записи услуг второго визита",
-    serviceName: "Название услуги",
-    serviceType: "Тип услуги",
-    price: "Цена",
-    quantity: "Количество",
-    total: "Итого",
-    grandTotal: "Общий итог",
-    medicalTreatmentPlan: "План медицинского лечения",
-    medicalNotes: "Медицинские заметки",
-    aboutTheClinic: "О клинике",
-    uploadedImages: "Загруженные изображения",
-    aboutClinicText:
-      "В СТОМАТОЛОГИЧЕСКОЙ КЛИНИКЕ мы стремимся предоставить высочайшие стандарты качества, экспертизы и здравоохранения, предоставляемые самым опытным медицинским и административным персоналом. Мы предлагаем косметические медицинские услуги командой лучших врачей в области эстетической медицины в Турции.",
-  },
-  fr: {
-    medicalFormReport: "Rapport de formulaire médical",
-    personalInformation: "Informations personnelles",
-    consultantName: "Nom du consultant",
-    patientName: "Nom du patient",
-    phoneNumber: "Numéro de téléphone",
-    patientId: "ID du patient",
-    entryDate: "Date d'entrée",
-    age: "Âge",
-    currency: "Devise",
-    language: "Langue",
-    healthCondition: "État de santé",
-    services: "Services",
-    firstVisitInformation: "Informations sur la première visite",
-    secondVisitInformation: "Informations sur la deuxième visite",
-    visitDate: "Date de visite",
-    visitDays: "Jours de visite",
-    firstVisitServiceEntries: "Entrées de service de la première visite",
-    secondVisitServiceEntries: "Entrées de service de la deuxième visite",
-    serviceName: "Nom du service",
-    serviceType: "Type de service",
-    price: "Prix",
-    quantity: "Quantité",
-    total: "Total",
-    grandTotal: "Total général",
-    medicalTreatmentPlan: "Plan de traitement médical",
-    medicalNotes: "Notes médicales",
-    aboutTheClinic: "À propos de la clinique",
-    uploadedImages: "Images téléchargées",
-    aboutClinicText:
-      "À la CLINIQUE DENTAIRE, nous nous engageons à fournir les plus hauts standards de qualité, d'expertise et de soins de santé, dispensés par le personnel médical et administratif le plus expérimenté. Nous offrons des services médicaux cosmétiques par une équipe des meilleurs médecins dans le domaine de la médecine esthétique en Turquie.",
-  },
-};
+// استيراد ملف الترجمات العربية
+import arabicTranslations from "../locales/ar.json";
 
 /* ========= config ========= */
 const SQUARE_SIDE = 220; // حجم الصور المربعة في الجاليري
@@ -140,41 +46,46 @@ const HEADER_IMG_H = 70; // اضبطها حسب ارتفاع الـ header.svg
 const FOOTER_IMG_H = 120; // اضبطها حسب ارتفاع الـ footer.svg
 const CONTENT_WIDTH = 515; // عرض مساحة المحتوى الافتراضي داخل A4 مع الهوامش
 
-/* ========= options & label mappers ========= */
-const currencyOptions = [
-  { value: "EUR", label: "Euro (€)" },
-  { value: "USD", label: "US Dollar ($)" },
-  { value: "GBP", label: "British Pound (£)" },
-  { value: "CAD", label: "Canadian Dollar (C$)" },
-];
+/* ========= تحويل البيانات من JSON إلى تنسيق الخيارات ========= */
+const currencyOptions = Object.entries(arabicTranslations.currencies).map(
+  ([value, label]) => ({
+    value,
+    label,
+  })
+);
 
-const languageOptions = [
-  { value: "arabic", label: "Arabic" },
-  { value: "english", label: "English" },
-  { value: "french", label: "French" },
-  { value: "spanish", label: "Spanish" },
-  { value: "turkish", label: "Turkish" },
-  { value: "russian", label: "Russian" },
-  { value: "other", label: "Other" },
-];
+const languageOptions = Object.entries(arabicTranslations.languages).map(
+  ([value, label]) => ({
+    value,
+    label,
+  })
+);
 
-const healthConditionOptions = [
-  { value: "good", label: "Good" },
-  { value: "requires_report", label: "Requires medical report" },
-];
+const healthConditionOptions = Object.entries(
+  arabicTranslations.health_conditions
+).map(([value, label]) => ({
+  value,
+  label,
+}));
 
-// خدمات Step1 + خدمات Step2 الإضافية (للاستخدام في الجداول)
-const servicesOptionsAll = [
-  { value: "dental", label: "Dental" },
-  { value: "hollywood_smile", label: "Hollywood Smile" },
-  { value: "dental_implant", label: "Dental Implant" },
-  { value: "zirconium_crown", label: "Zirconium Crown" },
-  { value: "open_sinus_lift", label: "Open Sinus Lift" },
-  { value: "close_sinus_lift", label: "Close Sinus Lift" },
-  { value: "veneer_lens", label: "Veneer Lens" },
-  { value: "hotel_accommodation", label: "Hotel Accommodation" },
-  { value: "transport", label: "Transport" },
-];
+const servicesOptionsAll = Object.entries(arabicTranslations.services).map(
+  ([value, label]) => ({
+    value,
+    label,
+  })
+);
+
+/* ========= دالة الترجمة المحدثة ========= */
+function getTranslation(key: string): string {
+  // البحث في جميع أقسام الترجمة
+  const allTranslations = {
+    ...arabicTranslations.headers,
+    ...arabicTranslations.fields,
+    ...arabicTranslations.table,
+  };
+
+  return allTranslations[key as keyof typeof allTranslations] || key;
+}
 
 function mapLabel(
   options: { value: string; label: string }[],
@@ -182,13 +93,35 @@ function mapLabel(
 ) {
   const v = value == null ? "" : String(value);
   const found = options.find((o) => o.value === v);
-  return found ? found.label : v;
+  const result = found ? found.label : v;
+  return processArabicText(result);
 }
 
-/* ========= helpers ========= */
-const isEmpty = (v?: string | number | "") =>
-  v === "" || v === undefined || v === null;
-const asText = (v?: string | number | "") => (isEmpty(v) ? "-" : String(v));
+function t(key: string): string {
+  const text = getTranslation(key);
+  return processArabicText(text);
+}
+
+// دالة لمعالجة النصوص العربية
+function processArabicText(text: string | number | undefined | null): string {
+  if (!text) return "-";
+  const str = String(text);
+
+  // فحص إذا كان النص يحتوي على أحرف عربية
+  const hasArabic = /[\u0600-\u06FF]/.test(str);
+
+  if (hasArabic) {
+    // عكس ترتيب الكلمات للنصوص العربية مع الحفاظ على المسافات
+    const words = str
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0); // إزالة الكلمات الفارغة
+    const reversedWords = words.reverse();
+    return reversedWords.join("  "); // ربط بمسافتين لضمان الوضوح
+  }
+
+  return str;
+}
 
 function toBase64(buffer: ArrayBuffer): string {
   let binary = "";
@@ -284,7 +217,7 @@ async function ensureAssets(): Promise<void> {
       const pm = pdfMake as unknown as PdfMakeWithVfs;
       if (!pm.vfs) pm.vfs = {};
 
-      // Roboto
+      // Roboto (for English fallback)
       const RREG = "Roboto-Regular.ttf";
       const RBLD = "Roboto-Bold.ttf";
       if (!pm.vfs[RREG]) {
@@ -296,6 +229,20 @@ async function ensureAssets(): Promise<void> {
         const b64 = await fetchAsBase64(robotoBoldUrl);
         if (!b64) throw new Error("Failed to load Roboto-Bold.ttf");
         pm.vfs[RBLD] = b64;
+      }
+
+      // Arial font
+      const AREG = "Arial-Regular.ttf";
+      const ABLD = "Arial-Bold.ttf";
+      if (!pm.vfs[AREG]) {
+        const b64 = await fetchAsBase64(arialRegularUrl);
+        if (!b64) throw new Error("Failed to load Arial-Regular.ttf");
+        pm.vfs[AREG] = b64;
+      }
+      if (!pm.vfs[ABLD]) {
+        const b64 = await fetchAsBase64(arialBoldUrl);
+        if (!b64) throw new Error("Failed to load Arial-Bold.ttf");
+        pm.vfs[ABLD] = b64;
       }
 
       // SVG banners (background)
@@ -316,6 +263,7 @@ async function ensureAssets(): Promise<void> {
 
       pm.fonts = {
         Roboto: { normal: RREG, bold: RBLD, italics: RREG, bolditalics: RBLD },
+        Arial: { normal: AREG, bold: ABLD, italics: AREG, bolditalics: ABLD },
       };
     })();
   }
@@ -333,8 +281,16 @@ function money(v: number | "" | undefined, currency: string) {
   return isEmpty(v) ? "-" : `${v} ${currency}`;
 }
 
+function isEmpty(v: any): boolean {
+  return v == null || v === "" || v === undefined;
+}
+
+function asText(v: any): string {
+  return isEmpty(v) ? "-" : String(v);
+}
+
 /* ========= table layout ========= */
-function softBoxLayout(): TableLayout {
+function softBoxLayoutRTL(): TableLayout {
   return {
     hLineColor: () => "#475569",
     vLineColor: () => "#475569",
@@ -348,7 +304,7 @@ function softBoxLayout(): TableLayout {
   };
 }
 
-function visitBoxLayout(): TableLayout {
+function visitBoxLayoutRTL(): TableLayout {
   return {
     hLineColor: () => "#475569",
     vLineColor: () => "#475569",
@@ -363,54 +319,55 @@ function visitBoxLayout(): TableLayout {
   };
 }
 
-const Label = (t: string): Content => ({ text: t, style: "label" });
+const Label = (text: string): Content => ({
+  text: t(text),
+  style: "label",
+});
+
 const Val = (v: string | number | ""): Content =>
   isEmpty(v)
     ? { text: "-", style: "placeholder" }
-    : { text: String(v), style: "value" };
+    : { text: processArabicText(v), style: "value" };
 
 /* ========= sections ========= */
-function PersonalInfoBox(data: FormData, lang: string = "en"): Content {
-  const t =
-    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-
+function PersonalInfoBox(data: FormData): Content {
   return {
     margin: [0, 6, 0, 10],
     table: {
       widths: ["*", "*"],
       body: [
         [
-          { text: t.personalInformation, style: "boxTitle", colSpan: 2 },
+          { text: t("Personal Information"), style: "boxTitle", colSpan: 2 },
           {} as TableCell,
         ],
         [
           {
+            columns: [Val(data.age), { text: " :", width: 6 }, Label("Age")],
+            columnGap: 4,
+          },
+          {
             columns: [
-              Label(t.consultantName),
-              { text: ": ", width: 6 },
               Val(data.consultantName),
+              { text: " :", width: 6 },
+              Label("Consultant Name"),
             ],
-            columnGap: 4,
-          },
-          {
-            columns: [Label(t.age), { text: ": ", width: 6 }, Val(data.age)],
             columnGap: 4,
           },
         ],
         [
           {
             columns: [
-              Label(t.patientName),
-              { text: ": ", width: 6 },
-              Val(data.patientName),
-            ],
-            columnGap: 4,
-          },
-          {
-            columns: [
-              Label(t.currency),
-              { text: ": ", width: 6 },
               Val(mapLabel(currencyOptions, data.currency)),
+              { text: " :", width: 6 },
+              Label("Currency"),
+            ],
+            columnGap: 4,
+          },
+          {
+            columns: [
+              Val(data.patientName),
+              { text: " :", width: 6 },
+              Label("Patient Name"),
             ],
             columnGap: 4,
           },
@@ -418,17 +375,17 @@ function PersonalInfoBox(data: FormData, lang: string = "en"): Content {
         [
           {
             columns: [
-              Label(t.phoneNumber),
-              { text: ": ", width: 6 },
-              Val(data.phoneNumber),
-            ],
-            columnGap: 4,
-          },
-          {
-            columns: [
-              Label(t.language),
-              { text: ": ", width: 6 },
               Val(mapLabel(languageOptions, data.language)),
+              { text: " :", width: 6 },
+              Label("Language"),
+            ],
+            columnGap: 4,
+          },
+          {
+            columns: [
+              Val(data.phoneNumber),
+              { text: " :", width: 6 },
+              Label("Phone Number"),
             ],
             columnGap: 4,
           },
@@ -436,17 +393,18 @@ function PersonalInfoBox(data: FormData, lang: string = "en"): Content {
         [
           {
             columns: [
-              Label(t.patientId),
-              { text: ": ", width: 6 },
-              Val(data.patientId),
-            ],
-            columnGap: 4,
-          },
-          {
-            columns: [
-              Label(t.healthCondition),
-              { text: ": ", width: 6 },
               Val(mapLabel(healthConditionOptions, data.healthCondition)),
+              { text: " :", width: 6 },
+              Label("Health Condition"),
+            ],
+            columnGap: 4,
+          },
+
+          {
+            columns: [
+              Val(data.patientId),
+              { text: " :", width: 6 },
+              Label("Patient ID"),
             ],
             columnGap: 4,
           },
@@ -454,133 +412,127 @@ function PersonalInfoBox(data: FormData, lang: string = "en"): Content {
         [
           {
             columns: [
-              Label(t.entryDate),
-              { text: ": ", width: 6 },
-              Val(data.entryDate),
+              Val(mapLabel(servicesOptionsAll, data.services)),
+              { text: " :", width: 6 },
+              Label("Services"),
             ],
             columnGap: 4,
           },
           {
             columns: [
-              Label(t.services),
-              { text: ": ", width: 6 },
-              Val(mapLabel(servicesOptionsAll, data.services)),
+              Val(data.entryDate),
+              { text: " :", width: 6 },
+              Label("Entry Date"),
             ],
             columnGap: 4,
           },
         ],
       ],
     },
-    layout: softBoxLayout(),
+    layout: softBoxLayoutRTL(),
   };
 }
 
-function VisitInfoBox(
-  title: string,
-  date: string,
-  days: number | "",
-  lang: string = "en"
-): Content {
-  const t =
-    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-
+function VisitInfoBox(title: string, date: string, days: number | ""): Content {
   return {
     margin: [0, 6, 0, 8],
     table: {
       widths: ["*", "*"],
       body: [
-        [{ text: title, style: "boxTitle", colSpan: 2 }, {} as TableCell],
+        [{ text: t(title), style: "boxTitle", colSpan: 2 }, {} as TableCell],
         [
           {
             columns: [
-              { text: t.visitDate, style: "label", color: "#ffffff" },
-              { text: ": ", width: 6, color: "#ffffff" },
-              { text: date || "-", style: "value", color: "#ffffff" },
-            ],
-            columnGap: 4,
-          },
-          {
-            columns: [
-              { text: t.visitDays, style: "label", color: "#ffffff" },
-              { text: ": ", width: 6, color: "#ffffff" },
               {
                 text: isEmpty(days) ? "-" : String(days),
                 style: "value",
                 color: "#ffffff",
               },
+              { text: " :", width: 6, color: "#ffffff" },
+              { text: t("Visit Days"), style: "label", color: "#ffffff" },
+            ],
+            columnGap: 4,
+          },
+          {
+            columns: [
+              {
+                text: processArabicText(date),
+                style: "value",
+                color: "#ffffff",
+              },
+              { text: " :", width: 6, color: "#ffffff" },
+              { text: t("Visit Date"), style: "label", color: "#ffffff" },
             ],
             columnGap: 4,
           },
         ],
       ],
     },
-    layout: visitBoxLayout(),
+    layout: visitBoxLayoutRTL(),
   };
 }
 
 function ServicesBox(
   title: string,
   entries: ServiceEntry[],
-  currency: string,
-  lang: string = "en"
+  currency: string
 ): Content {
-  const t =
-    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-
   const header: TableCell[] = [
     {
-      text: t.serviceName,
+      text: t("Total"),
       alignment: "center",
       bold: true,
       color: "#ffffff",
       fontSize: 10,
     },
     {
-      text: t.serviceType,
+      text: t("Quantity"),
       alignment: "center",
       bold: true,
       color: "#ffffff",
       fontSize: 10,
     },
     {
-      text: t.price,
+      text: t("Price"),
       alignment: "center",
       bold: true,
       color: "#ffffff",
       fontSize: 10,
     },
     {
-      text: t.quantity,
+      text: t("Service Type"),
       alignment: "center",
       bold: true,
       color: "#ffffff",
       fontSize: 10,
     },
     {
-      text: t.total,
+      text: t("Service Name"),
       alignment: "center",
       bold: true,
       color: "#ffffff",
       fontSize: 10,
     },
   ];
+
   const rows: TableCell[][] = entries.map((s) => [
-    {
-      text:
-        mapLabel(servicesOptionsAll, s.serviceName) || asText(s.serviceName),
-      alignment: "center",
-    },
-    { text: asText(s.serviceType), alignment: "center" },
-    { text: money(s.price as number, currency), alignment: "center" },
-    {
-      text: isEmpty(s.quantity) ? "-" : String(s.quantity),
-      alignment: "center",
-    },
     {
       text:
         isEmpty(s.price) || isEmpty(s.quantity)
           ? "-"
           : `${lineTotal(s)} ${currency}`,
+      alignment: "center",
+    },
+    {
+      text: isEmpty(s.quantity) ? "-" : String(s.quantity),
+      alignment: "center",
+    },
+    { text: money(s.price as number, currency), alignment: "center" },
+    { text: asText(s.serviceType), alignment: "center" },
+    {
+      text: asText(
+        mapLabel(servicesOptionsAll, s.serviceName as string | number | "")
+      ),
       alignment: "center",
     },
   ]);
@@ -591,7 +543,7 @@ function ServicesBox(
       widths: ["*", "*", 55, 55, 60],
       body: [
         [
-          { text: title, style: "boxTitle", colSpan: 5 },
+          { text: t(title), style: "boxTitle", colSpan: 5 },
           {},
           {},
           {},
@@ -601,51 +553,76 @@ function ServicesBox(
         ...rows,
       ],
     },
-    layout: visitBoxLayout(),
+    layout: visitBoxLayoutRTL(),
   };
 }
 
 /* ========= Notes-like boxes (generic) ========= */
 function DocNoteBox(title: string, text?: string): Content {
-  const s = asText(text);
+  const s = processArabicText(text);
   if (!s || s === "-") return { text: "" };
   return {
     margin: [0, 8, 0, 8],
     table: {
       widths: ["*"],
       body: [
-        [{ text: title, style: "boxTitle" }],
+        [{ text: t(title), style: "boxTitle", fillColor: "#504035" }],
         [{ text: s, style: "value", margin: [6, 6, 6, 6] }],
       ],
     },
-    layout: softBoxLayout(),
+    layout: {
+      hLineColor: () => "#475569",
+      vLineColor: () => "#475569",
+      hLineWidth: (i: number) => (i === 1 ? 1.2 : 0.6),
+      vLineWidth: () => 0.6,
+      paddingLeft: () => 6,
+      paddingRight: () => 6,
+      paddingTop: () => 6,
+      paddingBottom: () => 6,
+      fillColor: (rowIndex: number) => (rowIndex === 0 ? "#504035" : "#f8fafc"),
+    },
   };
 }
 
-function AboutClinicBox(lang: string = "en"): Content {
-  const t =
-    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
+function AboutClinicBox(): Content {
+  const aboutText = arabicTranslations.clinic_about;
 
   return {
     margin: [0, 6, 0, 0],
     table: {
       widths: ["*"],
       body: [
-        [{ text: t.aboutTheClinic, style: "boxTitle" }],
-        [{ text: t.aboutClinicText, style: "value", alignment: "left" }],
+        [{ text: t("About the Clinic"), style: "boxTitle" }],
+        [
+          {
+            text: processArabicText(aboutText),
+            style: "value",
+            alignment: "right",
+          },
+        ],
       ],
     },
-    layout: softBoxLayout(),
+    layout: {
+      hLineColor: () => "#475569",
+      vLineColor: () => "#475569",
+      hLineWidth: (i: number) => (i === 1 ? 1.2 : 0.6),
+      vLineWidth: () => 0.6,
+      paddingLeft: () => 6,
+      paddingRight: () => 6,
+      paddingTop: () => 6,
+      paddingBottom: () => 6,
+      fillColor: (rowIndex: number) => (rowIndex === 0 ? "#504035" : "#f8fafc"),
+    },
   };
 }
 
 /** يجعل العنوان + كل الصور (حتى 4 صور) + البانر السفلي في نفس الصفحة وداخل بلوك واحد */
-function GalleryOnly(squareDataUrls: string[], lang: string = "en"): Content {
-  const t =
-    pdfTranslations[lang as keyof typeof pdfTranslations] || pdfTranslations.en;
-
+function GalleryWithBottomBanner(
+  squareDataUrls: string[],
+  bannerDataUrl?: string | null
+): Content {
   const imgs = (squareDataUrls || []).slice(0, GALLERY_MAX);
-  if (!imgs.length) return { text: "" }; // لا تظهر شيء إذا لم تكن هناك صور
+  if (!imgs.length) return { text: "" };
 
   const rows: string[][] = [];
   for (let i = 0; i < imgs.length; i += 2) {
@@ -673,24 +650,24 @@ function GalleryOnly(squareDataUrls: string[], lang: string = "en"): Content {
     };
   };
 
-  const stack: Content[] = [...rows.map(rowTable)];
+  const stack: Content[] = [
+    { text: t("Uploaded Images"), style: "boxTitle", margin: [0, 6, 0, 6] },
+    ...rows.map(rowTable),
+  ];
+
+  if (bannerDataUrl) {
+    stack.push({
+      image: bannerDataUrl,
+      width: CONTENT_WIDTH,
+      alignment: "center",
+      margin: [0, 10, 0, 0],
+    });
+  }
 
   return {
     margin: [0, 8, 0, 0],
     unbreakable: true,
     stack,
-  };
-}
-
-/** البانر السفلي كعنصر منفصل */
-function BottomBanner(bannerDataUrl?: string | null): Content {
-  if (!bannerDataUrl) return { text: "" };
-
-  return {
-    image: bannerDataUrl,
-    width: CONTENT_WIDTH,
-    alignment: "center",
-    margin: [0, 10, 0, 0],
   };
 }
 
@@ -743,24 +720,8 @@ interface ExtraFields {
 }
 
 export async function generatePDF(formData: FormData): Promise<void> {
-  // Check if Arabic is selected for PDF language
-  if (formData.pdfLanguage === "ar") {
-    return generatePDFArabic(formData);
-  }
-
-  // Check if Arabic is selected for PDF language
-  if (formData.pdfLanguage === "ar") {
-    return generatePDFArabic(formData);
-  }
-
   try {
     await ensureAssets();
-
-    // Get PDF language from form data, default to English
-    const pdfLang = formData.pdfLanguage || "en";
-    const t =
-      pdfTranslations[pdfLang as keyof typeof pdfTranslations] ||
-      pdfTranslations.en;
 
     // جهّز صور Step3 كمربعات 220×220 (حسب SQUARE_SIDE)
     const f = formData as FormData & ExtraFields;
@@ -803,8 +764,8 @@ export async function generatePDF(formData: FormData): Promise<void> {
       content: [
         // الصفحة الأولى
         {
-          text: t.medicalFormReport,
-          style: "headerEN",
+          text: t("Medical Form Report"),
+          style: "headerAR",
           alignment: "center",
           margin: [0, 0, 0, 6],
           decoration: "underline",
@@ -824,72 +785,73 @@ export async function generatePDF(formData: FormData): Promise<void> {
             ]
           : []),
 
-        PersonalInfoBox(formData, pdfLang),
+        PersonalInfoBox(formData),
 
         // ابدأ First Visit من الصفحة الثانية
         { text: "", pageBreak: "before" },
 
         // First visit (صفحة 2) — حماية الوصول
         VisitInfoBox(
-          t.firstVisitInformation,
+          "First Visit Information",
           formData.firstVisit?.visitDate || "",
-          formData.firstVisit?.visitDays ?? "",
-          pdfLang
+          formData.firstVisit?.visitDays ?? ""
         ),
         ServicesBox(
-          t.firstVisitServiceEntries,
+          "First Visit Service Entries",
           formData.firstVisit?.serviceEntries || [],
-          currency,
-          pdfLang
+          currency
         ),
 
         // Second visit (اختياري بالكامل)
         ...(hasSecond
           ? [
               VisitInfoBox(
-                t.secondVisitInformation,
+                "Second Visit Information",
                 formData.secondVisit?.visitDate || "",
-                formData.secondVisit?.visitDays ?? "",
-                pdfLang
+                formData.secondVisit?.visitDays ?? ""
               ),
               ServicesBox(
-                t.secondVisitServiceEntries,
+                "Second Visit Service Entries",
                 formData.secondVisit?.serviceEntries || [],
-                currency,
-                pdfLang
+                currency
               ),
             ]
           : []),
 
-        // Grand Total Table
         {
           margin: [0, 6, 0, 6],
           table: {
-            widths: ["*", "auto"],
+            widths: ["*"],
             body: [
               [
                 {
-                  text: t.grandTotal,
-                  bold: true,
-                  fontSize: 11,
-                  color: "#ffffff",
-                  alignment: "left",
-                },
-                {
-                  text: `${all} ${currency}`,
-                  bold: true,
-                  fontSize: 11,
-                  color: "#ffffff",
-                  alignment: "right",
+                  columns: [
+                    {
+                      text: processArabicText(`${all} ${currency}`),
+                      bold: true,
+                      fontSize: 11,
+                      color: "#ffffff",
+                      alignment: "left",
+                    },
+                    { text: " : ", width: 6 },
+                    {
+                      text: t("Grand Total"),
+                      bold: true,
+                      fontSize: 11,
+                      color: "#ffffff",
+                      alignment: "right",
+                    },
+                  ],
+                  columnGap: 4,
                 },
               ],
             ],
           },
-          layout: softBoxLayout(),
+          layout: softBoxLayoutRTL(),
         },
 
         // صناديق ملاحظات/خطة العلاج
-        DocNoteBox(t.medicalTreatmentPlan, f.medicalTreatmentPlan),
+        DocNoteBox("Medical Treatment Plan", f.medicalTreatmentPlan),
         {
           canvas: [
             {
@@ -904,32 +866,58 @@ export async function generatePDF(formData: FormData): Promise<void> {
           ],
           margin: [0, 4, 0, 4],
         },
-        DocNoteBox(t.medicalNotes, f.medicalNotes),
+        DocNoteBox("Medical Notes", f.medicalNotes),
 
-        AboutClinicBox(pdfLang),
+        AboutClinicBox(),
 
-        // المعرض (الصور فقط إذا وجدت)
-        GalleryOnly(squareUrls, pdfLang),
-
-        // البانر السفلي (يظهر دائماً إذا كان متوفراً)
-        BottomBanner(bannerBottomDataUrl),
+        // المعرض + العنوان + البانر السفلي كبلوك واحد
+        GalleryWithBottomBanner(squareUrls, bannerBottomDataUrl),
       ],
 
-      defaultStyle: { font: "Roboto", fontSize: 9, alignment: "left" },
+      defaultStyle: {
+        font: "Arial",
+        fontSize: 10,
+        alignment: "right",
+      },
+
       styles: {
-        headerEN: { fontSize: 16, bold: true },
-        boxTitle: { fontSize: 11, bold: true, color: "#ffffff" },
+        headerAR: {
+          fontSize: 16,
+          bold: true,
+          font: "Arial",
+          alignment: "center",
+        },
+        boxTitle: {
+          fontSize: 11,
+          bold: true,
+          font: "Arial",
+          color: "#ffffff",
+        },
         tableHeader: {
           bold: true,
           fillColor: "#334155",
           color: "#ffffff",
+          font: "Arial",
           fontSize: 10,
         },
-        label: { bold: true, fontSize: 9 },
-        value: { fontSize: 9 },
-        placeholder: { bold: true, color: "#999", fontSize: 9 },
-        grandTotalLabel: { bold: true, fontSize: 11, color: "#000000" },
-        grandTotalValue: { bold: true, fontSize: 11, color: "#000000" },
+        label: {
+          bold: true,
+          fontSize: 9,
+          font: "Arial",
+          alignment: "right",
+        },
+        value: {
+          fontSize: 9,
+          font: "Arial",
+          alignment: "right",
+        },
+        placeholder: {
+          bold: true,
+          color: "#999",
+          fontSize: 9,
+          font: "Arial",
+          alignment: "right",
+        },
       } as StyleDictionary,
     };
 
@@ -941,7 +929,7 @@ export async function generatePDF(formData: FormData): Promise<void> {
         if (!win) {
           const a = document.createElement("a");
           a.href = url;
-          a.download = "medical-report.pdf";
+          a.download = "medical-report-arabic.pdf";
           a.click();
         }
         setTimeout(() => URL.revokeObjectURL(url), 30000);
@@ -950,6 +938,6 @@ export async function generatePDF(formData: FormData): Promise<void> {
     });
   } catch (err) {
     console.error("PDF generation error:", err);
-    alert("Error generating PDF. Check console for details.");
+    alert("حدث خطأ في توليد ملف PDF. تحقق من وحدة التحكم للحصول على التفاصيل.");
   }
 }

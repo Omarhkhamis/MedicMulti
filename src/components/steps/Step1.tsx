@@ -145,7 +145,7 @@ const Step1: React.FC<StepProps> = ({ formData, errors, onChange, onBlur }) => {
         />
 
         <FormInput
-          label={t('services')}
+          label={t('services_label')}
           type="select"
           value={formData.services}
           onChange={(value) => onChange("services", value)}

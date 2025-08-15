@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage, Language } from '../contexts/LanguageContext';
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
 
 interface StepNavigationProps {
@@ -19,7 +19,12 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
   onSubmit,
   isValid
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  // For RTL languages (Arabic), reverse the arrow directions
+  const isRTL = language === 'ar';
+  const PreviousIcon = isRTL ? ChevronRight : ChevronLeft;
+  const NextIcon = isRTL ? ChevronLeft : ChevronRight;
 
   return (
     <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-600">
@@ -33,7 +38,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
             : 'bg-gray-600 text-gray-200 hover:bg-gray-500 hover:shadow-md'
         }`}
       >
-        <ChevronLeft size={20} />
+        <PreviousIcon size={20} />
         {t('previous')}
       </button>
 
@@ -76,7 +81,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           }`}
         >
           {t('next')}
-          <ChevronRight size={20} />
+          <NextIcon size={20} />
         </button>
       )}
     </div>

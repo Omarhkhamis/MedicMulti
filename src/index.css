@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* RTL Support for Arabic */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl input,
+.rtl textarea,
+.rtl select {
+  text-align: right;
+}
+
+.rtl .phone-input-wrapper .PhoneInputInput {
+  text-align: right;
+}
